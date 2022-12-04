@@ -1,9 +1,8 @@
 import datetime
 import math
 
-import threading
 import multiprocessing
-
+from concurrent.futures.process import ProcessPoolExecutor
 
 def main():
 
@@ -12,24 +11,15 @@ def main():
 
     inicio = datetime.datetime.now()
 
-    threads = []
-
     FIM = 50_000_000
 
-    for n in range(1, qtd_cores + 1):
-        ini = FIM * (n - 1) / qtd_cores
-        fim = FIM * n / qtd_cores
-        print(f'Core {n} processando de {ini} até {fim}')
-        threads.append(
-            threading.Thread(
-                target=computar,
-                kwargs={'inicio': ini, 'fim': fim},
-                daemon=True
-            )
-        )
+    with ProcessPoolExecutor(max_workers=qtd_cores) as executor:
 
-    [th.start() for th in threads]
-    [th.join() for th in threads]
+        for n in range(1, qtd_cores + 1):
+            ini = FIM * (n - 1) / qtd_cores
+            fim = FIM * n / qtd_cores
+            print(f'Core {n} processando de {ini} até {fim}')
+            executor.submit(computar, inicio=ini, fim=fim)
 
     tempo = datetime.datetime.now() - inicio
 

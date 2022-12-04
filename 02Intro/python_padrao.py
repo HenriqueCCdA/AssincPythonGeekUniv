@@ -5,7 +5,7 @@ import math
 def main():
     inicio = datetime.datetime.now()
 
-    computar(fim=1_000_000_000)
+    computar(fim=50_000_000)
 
     tempo = datetime.datetime.now() - inicio
 
